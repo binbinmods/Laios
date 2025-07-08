@@ -1,0 +1,10 @@
+{
+  "name": "Laios_The_Enforcer",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/binbinmods/Laios",
+  "description": "New Hero Mod for Laios, the Enforcer. A new Warrior/Healer specialized in Holy, Zeal, and Blunt",
+  "dependencies": [
+    "meds-Obeliskial_Content-1.5.0",
+    "meds-Obeliskial_Essentials-1.4.6"
+  ]
+}
