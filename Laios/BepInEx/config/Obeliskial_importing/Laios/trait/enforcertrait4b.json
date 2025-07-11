@@ -1,5 +1,5 @@
 {
-    "Activation": "None",
+    "Activation": "CastCard",
     "AuraCurseBonus1": "",
     "AuraCurseBonus2": "",
     "AuraCurseBonus3": "",
@@ -23,12 +23,12 @@
     "DamageBonusPercentValue": 0.0,
     "DamageBonusPercentValue2": 0.0,
     "DamageBonusPercentValue3": 0.0,
-    "Description": "<Description of what the innate does>",
+    "Description": "When you play a Defense, add a random Defense that costs 1 more to your hand. This card costs 0 and Vanish. (1 time/turn). ",
     "HealFlatBonus": 0,
     "HealPercentBonus": 0.0,
     "HealReceivedFlatBonus": 0,
     "HealReceivedPercentBonus": 0.0,
-    "ID": "<ID of the trait. Must match the name of the file and the ID found in <subclassname>.json. Example - characternametrait0name or ulfvitrcalltherain>",
+    "ID": "enforcertrait4b",
     "ResistModified1": "None",
     "ResistModified2": "None",
     "ResistModified3": "None",
@@ -36,8 +36,8 @@
     "ResistModifiedValue2": 0,
     "ResistModifiedValue3": 0,
     "TimesPerRound": 0,
-    "TimesPerTurn": 0,
+    "TimesPerTurn": 1,
     "TraitCard": "",
     "TraitCardForAllHeroes": "",
-    "TraitName": "<Name of the trait. Example - Call the Rain"
+    "TraitName": "Cyclical Citadel"
 }

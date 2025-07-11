@@ -1,0 +1,15 @@
+{
+    "BaseSkin": true,
+    "PerkLevel": 0,
+    "SkinGO": "skinlaios",
+    "SkinID": "enforcerbase",
+    "SkinName": "Default",
+    "SkinOrder": 0,
+    "SkinSubclass": "enforcer",
+    "Sku": "",
+    "SpritePortrait": "laiosPortrait",
+    "SpritePortraitGrande": "laiosPortraitGrande",
+    "SpriteSilueta": "laiosSilueta",
+    "SpriteSiluetaGrande": "laiosSiluetaGrande",
+    "SteamStat": ""
+}

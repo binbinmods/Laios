@@ -1,0 +1,15 @@
+{
+    "Card0": "enforcersacredquake",
+    "Card1": "enforcerholysmash",
+    "Card2": "shieldbash",
+    "Card3": "holynova",
+    "Card4": "barricade",
+    "Card5": "",
+    "CardSpecial0": "",
+    "CardSpecial1": "",
+    "PackClass": "warrior",
+    "PackID": "laios",
+    "PackName": "Laios",
+    "PerkList": [],
+    "RequiredClass": "enforcer"
+}
