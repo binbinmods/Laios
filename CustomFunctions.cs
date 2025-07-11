@@ -9,6 +9,7 @@ using static UnityEngine.Mathf;
 using UnityEngine.TextCore.LowLevel;
 using static Laios.Plugin;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Laios
 {
@@ -1606,6 +1607,51 @@ namespace Laios
         }
 
         /// <summary>
+        /// Adds a card to the currently active hero's hand.
+        /// </summary>
+        /// <param name="cardId">Id of the card to add</param>
+        /// <param name="randomlyUpgraded">Whether or not you want the card to be randomly upgraded.</param>
+        /// <param name="vanish">Whether the card should vanish</param>
+        /// <param name="costZero">Whether the card should cost 0.</param>
+        /// <param name="costReduction">How much the card should have its cost reduced by</param>
+        /// <param name="permanentCostReduction">Whether the cost reduction is permanent or not</param>
+        public static void AddCardToHand(string cardId, bool randomlyUpgraded = true, bool vanish = true, bool costZero = true, int costReduction = 0, bool permanentCostReduction = false)
+        {
+            if (MatchManager.Instance.CountHeroHand() == 10)
+            {
+                LogDebug("[TRAIT EXECUTION] Broke because player at max cards");
+                return;
+            }
+            string str = cardId;
+            string cardInDictionary;
+            if (randomlyUpgraded)
+            {
+                int randomIntRange = MatchManager.Instance.GetRandomIntRange(0, 100, "trait");
+                cardInDictionary = MatchManager.Instance.CreateCardInDictionary(randomIntRange >= 45 ? (randomIntRange >= 90 ? str + "rare" : str + "b") : str + "a");
+
+            }
+            else
+            {
+                cardInDictionary = MatchManager.Instance.CreateCardInDictionary(str);
+            }
+            CardData cardData = MatchManager.Instance.GetCardData(cardInDictionary);
+            cardData.Vanish = vanish;
+            if (permanentCostReduction)
+            {
+                cardData.EnergyReductionToZeroPermanent = costZero;
+                cardData.EnergyReductionPermanent = costReduction;
+
+            }
+            else
+            {
+                cardData.EnergyReductionToZeroTemporal = costZero;
+                cardData.EnergyReductionTemporal = costReduction;
+            }
+            MatchManager.Instance.GenerateNewCard(1, cardInDictionary, false, Enums.CardPlace.Hand);
+            MatchManager.Instance.CreateLogCardModification(cardData.InternalId, MatchManager.Instance.GetHeroHeroActive());
+        }
+
+        /// <summary>
         /// A Duality trait. Includes everything needed for the duality, no need to do anything else.
         /// </summary>
         /// <param name="_character">Character casting the card</param>
@@ -1682,6 +1728,50 @@ namespace Laios
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds a random card of a certain type to the hand of the active character.
+        /// </summary>
+        /// <param name="heroClass">Class of card to add</param>
+        /// <param name="cardTypes">Possible types of card to add</param>
+        /// <param name="cardCost">Cost of card to add</param>
+        /// <param name="costZero">Whether the card should be set to cost 0</param>
+        /// <param name="costReduction">How much the card should have its cost reduced by</param>
+        /// <param name="vanish">Whether the card vanishes or not</param>
+        /// <param name="permanentCostReduction">Whether the cost reduction is permanent or not</param>
+        public static string GetRandomCardOfTypeAndCost(Enums.HeroClass heroClass, Enums.CardType[] cardTypes, int cardCost)//, bool costZero = false, int costReduction = 0, bool vanish = true, bool permanentCostReduction = false)
+        {
+            if (!((UnityEngine.Object)MatchManager.Instance != (UnityEngine.Object)null))
+                return "";
+            List<string> stringList = new List<string>();
+            StringBuilder stringBuilder = new StringBuilder();
+            string heroClassString = Enum.GetName(typeof(Enums.HeroClass), (object)heroClass);
+            foreach (Enums.CardType cardType in cardTypes)
+            {
+                stringBuilder.Clear();
+                stringBuilder.Append(heroClassString);
+                stringBuilder.Append("_");
+                stringBuilder.Append(Enum.GetName(typeof(Enums.CardType), (object)cardType));
+                for (int index = 0; index < Globals.Instance.CardListByClassType[stringBuilder.ToString()].Count; ++index)
+                    stringList.Add(Globals.Instance.CardListByClassType[stringBuilder.ToString()][index]);
+            }
+            for (int index = 0; index < Globals.Instance.CardListByClassType[stringBuilder.ToString()].Count; ++index)
+                stringList.Add(Globals.Instance.CardListByClassType[stringBuilder.ToString()][index]);
+            int num2 = cardCost;  //MatchManager.Instance.energyJustWastedByHero;
+            if (num2 > 10)
+                num2 = 10;
+            bool flag = false;
+            string str = "";
+            for (int index = 0; !flag && index < 500; ++index)
+            {
+                int randomIntRange = MatchManager.Instance.GetRandomIntRange(0, stringList.Count, "trait");
+                str = stringList[randomIntRange];
+                if (Globals.Instance.GetCardData(str, false).EnergyCostOriginal == num2)
+                    break;
+            }
+            return str;
+
         }
 
     }

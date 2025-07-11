@@ -12,6 +12,7 @@ using System.Text;
 using TMPro;
 using Obeliskial_Essentials;
 using System.Data.Common;
+using BepInEx;
 
 namespace Laios
 {
@@ -69,8 +70,8 @@ namespace Laios
 
             if (_trait == trait0)
             {
-                // Gain 1 evade at combat start 
-                _character.SetAuraTrait(_character, "evade", 1);
+                // Gain 1 zeal every turn.
+                _character.SetAuraTrait(_character, "zeal", 1);
             }
 
 
@@ -83,13 +84,6 @@ namespace Laios
                 string traitName = traitData.TraitName;
                 string traitId = _trait;
 
-                if (CanIncrementTraitActivations(traitId) && _castedCard.HasCardType(Enums.CardType.Defense))// && MatchManager.Instance.energyJustWastedByHero > 0)
-                {
-                    LogDebug($"Handling Trait {traitId}: {traitName}");
-                    _character?.ModifyEnergy(1);
-                    DrawCards(1);
-                    IncrementTraitActivations(traitId);
-                }
             }
 
 
@@ -97,30 +91,53 @@ namespace Laios
             else if (_trait == trait2b)
             {
                 // trait2b:
-                // Stealth on heroes increases All Damage by an additional 15% per charge and All Resistances by an additional 5% per charge.",
+                // When you play an Attack or Spell, reduce the cost of your highest cost Defense by 1 until discarded. 
+                // When you play a Defense, reduce the cost of your highest cost Attack or Spell by 1 until discarded.
                 string traitName = traitData.TraitName;
                 string traitId = _trait;
+                int bonusActivations = _character.HaveTrait(trait4a) ? 1 : 0;
+                DualityCardType(ref _character, ref _castedCard, [Enums.CardType.Attack, Enums.CardType.Spell], [Enums.CardType.Defense], traitId, bonusActivations: bonusActivations);
 
             }
 
             else if (_trait == trait4a)
             {
                 // trait 4a;
-                // Evasion on you can't be purged unless specified. 
-                // Stealth grants 25% additional damage per charge.",
+                // Zeal on heroes is not lost at end of turn. When you hit an enemy, 
+                // suffer 2 burn. 
+                // Enforcer Duality can activate an extra time.                
                 string traitName = traitData.TraitName;
                 string traitId = _trait;
-
+                _character.SetAuraTrait(_character, "burn", 2);
                 LogDebug($"Handling Trait {traitId}: {traitName}");
             }
 
             else if (_trait == trait4b)
             {
                 // trait 4b:
-                // Heroes Only lose 75% stealth charges rounding down when acting in stealth.
+                // When you play a Defense, add a random Defense that costs 1 more to your hand. 
+                // This card costs 0 and Vanish. (1 time/turn). 
                 string traitName = traitData.TraitName;
                 string traitId = _trait;
-                LogDebug($"Handling Trait {traitId}: {traitName}");
+                if (CanIncrementTraitActivations(traitId) && _castedCard.HasCardType(Enums.CardType.Spell) && !(_castedCard.HasCardType(Enums.CardType.Lightning_Spell) || _castedCard.HasCardType(Enums.CardType.Fire_Spell)))
+                {
+                    LogDebug($"Handling Trait {traitId}: {traitName}");
+                    int cost = MatchManager.Instance.energyJustWastedByHero + 1;
+                    bool vanish = false;
+                    // int costReduction = 3;
+                    bool costZero = true;
+                    bool permanentCostReduction = true;
+
+                    string randomCard = GetRandomCardOfTypeAndCost(Enums.HeroClass.Mage, [Enums.CardType.Lightning_Spell, Enums.CardType.Fire_Spell], cost);//, costReduction: -3, vanish: false, permanentCostReduction: true);
+                    if (randomCard.IsNullOrWhiteSpace())
+                    {
+                        LogError($"No card found for trait {traitId} with cost {cost}");
+                        return;
+                    }
+                    AddCardToHand(randomCard, randomlyUpgraded: false, vanish: vanish, costZero: costZero, permanentCostReduction: permanentCostReduction);
+
+                    IncrementTraitActivations(traitId);
+                }
             }
 
         }
@@ -159,7 +176,8 @@ namespace Laios
             switch (_acId)
             {
                 // trait2a:
-                // Evasion on you stacks and increases All Damage by 1 per charge. 
+                // Crack on monsters increases Holy Damage taken by 1 per charge. 
+                // Sanctify reduces Blunt resistance by 0.5% per charge.
 
                 // trait2b:
                 // Stealth on heroes increases All Damage by an additional 15% per charge and All Resistances by an additional 5% per charge.",
@@ -170,125 +188,34 @@ namespace Laios
 
                 // trait 4b:
                 // Heroes Only lose 75% stealth charges rounding down when acting in stealth.
-
-                case "evasion":
-                    traitOfInterest = trait2a;
-                    if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.ThisHero))
-                    {
-                        __result.GainCharges = true;
-                        __result.AuraDamageType = Enums.DamageType.All;
-                        float multiplierAmount = 1.0f;  //characterOfInterest.HaveTrait(trait4a) ? 0.3f : 0.2f;
-                        __result.AuraDamageIncreasedPerStack = multiplierAmount;
-                        // __result.HealDoneTotal = Mathf.RoundToInt(multiplierAmount * characterOfInterest.GetAuraCharges("shield"));
-                    }
-                    traitOfInterest = trait4a;
-                    if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.ThisHero))
-                    {
-                        __result.Removable = false;
-                    }
-                    break;
-                case "stealth":
-                    traitOfInterest = trait2b;
+                case "zeal":
+                    traitOfInterest = trait4b;
                     if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.Heroes))
                     {
-                        __result.ResistModified = Enums.DamageType.All;
-                        __result.ResistModifiedPercentagePerStack += 5;
-                        __result.AuraDamageType = Enums.DamageType.All;
-                        __result.AuraDamageIncreasedPercentPerStack += 15;
+                        __result.ConsumedAtTurn = false;
+                        __result.ConsumedAtTurnBegin = false;
+                    }
+                    break;
+                case "sanctify":
+                    traitOfInterest = trait2a;
+                    if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.Monsters))
+                    {
+                        __result = __instance.GlobalAuraCurseModifyResist(__result, Enums.DamageType.Blunt, 0, -0.5f);
+                    }
+                    break;
+                case "crack":
+                    traitOfInterest = trait2a;
+                    if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.Monsters))
+                    {
+                        // __result = __instance.GlobalAuraCurseModifyDamage(__result, Enums.DamageType.Holy, 0, 1, 0);
+                        __result.IncreasedDamageReceivedType2 = Enums.DamageType.Holy;
+                        __result.IncreasedDirectDamageReceivedPerStack2 = 1;
                     }
                     break;
             }
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(Character), "HealAuraCurse")]
-        public static void HealAuraCursePrefix(ref Character __instance, AuraCurseData AC, ref int __state)
-        {
-            LogInfo($"HealAuraCursePrefix {subclassName}");
-            string traitOfInterest = trait4b;
-            if (IsLivingHero(__instance) && __instance.HaveTrait(traitOfInterest) && AC == GetAuraCurseData("stealth"))
-            {
-                __state = Mathf.FloorToInt(__instance.GetAuraCharges("stealth") * 0.25f);
-                // __instance.SetAuraTrait(null, "stealth", 1);
 
-            }
-
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(Character), "HealAuraCurse")]
-        public static void HealAuraCursePostfix(ref Character __instance, AuraCurseData AC, int __state)
-        {
-            LogInfo($"HealAuraCursePrefix {subclassName}");
-            string traitOfInterest = trait4b;
-            if (IsLivingHero(__instance) && __instance.HaveTrait(traitOfInterest) && AC == GetAuraCurseData("stealth") && __state > 0)
-            {
-                // __state = __instance.GetAuraCharges("stealth");
-                __instance.SetAuraTrait(null, "stealth", __state);
-            }
-
-        }
-
-
-
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(CharacterItem), nameof(CharacterItem.CalculateDamagePrePostForThisCharacter))]
-        public static void CalculateDamagePrePostForThisCharacterPrefix()
-        {
-            isDamagePreviewActive = true;
-        }
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(CharacterItem), nameof(CharacterItem.CalculateDamagePrePostForThisCharacter))]
-        public static void CalculateDamagePrePostForThisCharacterPostfix()
-        {
-            isDamagePreviewActive = false;
-        }
-
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(MatchManager), nameof(MatchManager.SetDamagePreview))]
-        public static void SetDamagePreviewPrefix()
-        {
-            isDamagePreviewActive = true;
-        }
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(MatchManager), nameof(MatchManager.SetDamagePreview))]
-        public static void SetDamagePreviewPostfix()
-        {
-            isDamagePreviewActive = false;
-        }
-
-
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(CardData), nameof(CardData.SetDescriptionNew))]
-        public static void SetDescriptionNewPostfix(ref CardData __instance, bool forceDescription = false, Character character = null, bool includeInSearch = true)
-        {
-            // LogInfo("executing SetDescriptionNewPostfix");
-            if (__instance == null)
-            {
-                LogDebug("Null Card");
-                return;
-            }
-            if (!Globals.Instance.CardsDescriptionNormalized.ContainsKey(__instance.Id))
-            {
-                LogError($"missing card Id {__instance.Id}");
-                return;
-            }
-
-
-            if (__instance.CardName == "Mind Maze")
-            {
-                StringBuilder stringBuilder1 = new StringBuilder();
-                LogDebug($"Current description for {__instance.Id}: {stringBuilder1}");
-                string currentDescription = Globals.Instance.CardsDescriptionNormalized[__instance.Id];
-                stringBuilder1.Append(currentDescription);
-                // stringBuilder1.Replace($"When you apply", $"When you play a Mind Spell\n or apply");
-                stringBuilder1.Replace($"Lasts one turn", $"Lasts two turns");
-                BinbinNormalizeDescription(ref __instance, stringBuilder1);
-            }
-        }
 
     }
 }
