@@ -119,11 +119,11 @@ namespace Laios
                 // This card costs 0 and Vanish. (1 time/turn). 
                 string traitName = traitData.TraitName;
                 string traitId = _trait;
-                if (CanIncrementTraitActivations(traitId) && _castedCard.HasCardType(Enums.CardType.Spell) && !(_castedCard.HasCardType(Enums.CardType.Lightning_Spell) || _castedCard.HasCardType(Enums.CardType.Fire_Spell)))
+                if (CanIncrementTraitActivations(traitId) && _castedCard.HasCardType(Enums.CardType.Defense))
                 {
                     LogDebug($"Handling Trait {traitId}: {traitName}");
                     int cost = MatchManager.Instance.energyJustWastedByHero + 1;
-                    bool vanish = false;
+                    bool vanish = true;
                     // int costReduction = 3;
                     bool costZero = true;
                     bool permanentCostReduction = true;

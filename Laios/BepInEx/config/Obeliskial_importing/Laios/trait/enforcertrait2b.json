@@ -23,7 +23,7 @@
     "DamageBonusPercentValue": 0.0,
     "DamageBonusPercentValue2": 0.0,
     "DamageBonusPercentValue3": 0.0,
-    "Description": "When you play an Attack or Spell, reduce the cost of your highest cost Defense by 1 until discarded. When you play a Defense, reduce the cost of your highest cost Attack or Spell by 1 until discarded.",
+    "Description": "When you play an Attack or Spell, reduce the cost of your highest cost Defense by 1 until discarded. When you play a Defense, reduce the cost of your highest cost Attack or Spell by 1 until discarded. (3 times/turn)",
     "HealFlatBonus": 0,
     "HealPercentBonus": 0.0,
     "HealReceivedFlatBonus": 0,
