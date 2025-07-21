@@ -189,7 +189,7 @@ namespace Laios
                 // trait 4b:
                 // Heroes Only lose 75% stealth charges rounding down when acting in stealth.
                 case "zeal":
-                    traitOfInterest = trait4b;
+                    traitOfInterest = trait4a;
                     if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.Heroes))
                     {
                         __result.ConsumedAtTurn = false;
