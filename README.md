@@ -1,15 +1,43 @@
-# TraitMod
+# Laios, the Enforcer
 
-Example mod for custom Across the Obelisk _effect_ traits.
+A hero mod, introducing Laios, a Warrior/Healer specialized in Holy, Zeal, and Blunt.
 
-## Usage
+This currently does not include any events or quests related to Laios other than those available to all heroes or all heroes of a specific class.
 
-1. Clone or fork this repository.
-2. Update the references to point to your versions of _0Harmony.dll_, _Assembly-CSharp.dll_, _BepInEx.dll_, _Obeliskial Essentials.dll_ and _Obeliskial Content.dll_. 
-3. Update the _RootNamespace_, _Product_, _AssemblyName_ and _Description_ in **TraitMod.csproj**.
-4. Rename the `namespace` in `Plugin.cs` and `Traits.cs` to what you set _RootNamespace_ to in step 3.
-5. In **Traits.cs**, enter your trait IDs in the _myTraitList_ array.
-6. In **Traits.cs**, code effects for your traits in the _myDoTrait_ method.
-7. Build the project.
+## Notes:
 
-... that's it, I guess?
+- I understand that things are going to be janky at times, and there are definitely bugs that will be worked out
+- **What to do if Laios is not unlocked:** Due to some jankiness of the way the code works, Laios is unlocked only for the profile that is open when you launch the game (and for new profiles). So if they aren't unlocked in the correct profile, switch to that profile, close the game and re-open it and they will be unlocked. I'll fix this in the future, but most people won't notice it. You can also just use the profile editor to fix it.
+- There are **no character events** for Laios at this time beyond the ones that are available to all characters of a given class (such as pet trainers or healers being able to remove cards at Rest areas).
+
+This mod relies on [Obeliskial Content](https://across-the-obelisk.thunderstore.io/package/meds/Obeliskial_Content/).
+
+## Laios Summary
+
+![Summary](https://raw.githubusercontent.com/binbinmods/Laios/refs/heads/main/Assets/LaiosSummary.png)
+
+## Installation (manual)
+
+1. Install [Obeliskial Essentials](https://across-the-obelisk.thunderstore.io/package/meds/Obeliskial_Essentials/) and [Obeliskial Content](https://across-the-obelisk.thunderstore.io/package/meds/Obeliskial_Content/).
+2. Click _Manual Download_ at the top of the page.
+3. In Steam, right-click Across the Obelisk and select _Manage_->_Browse local files_.
+4. Extract the archive into the game folder. Your `Across the Obelisk` folder should now contain a `BepInEx` folder and a `doorstop_libs` folder.
+5. Run the game. If everything runs correctly, you will see this mod in the list of registered mods on the main menu.
+6. Press F5 to open/close the Config Manager and F1 to show/hide mod version information.
+7. Note: I am not certain about these install instructions. In the worst case, just copy `com.binbin.Laios.dll` into the `BepInEx\plugins` folder, and the _Character_ folder (the one with the subfolders containing the json files) into `BepInEx\config\Obeliskial_importing`
+
+## Installation (automatic)
+
+1. Download and install [Thunderstore Mod Manager](https://www.overwolf.com/app/Thunderstore-Thunderstore_Mod_Manager) or [r2modman](https://across-the-obelisk.thunderstore.io/package/ebkr/r2modman/).
+2. Click **Install with Mod Manager** button on top of the page.
+3. Run the game via the mod manager.
+
+## Support
+
+This has been updated for Across the Obelisk version 1.7.4.2.
+
+Hope you enjoy it and if have any issues, ping me in Discord or make a post in the **modding #support-and-requests** channel of the [official Across the Obelisk Discord](https://discord.gg/across-the-obelisk-679706811108163701).
+
+## Donation
+
+Please do not donate to me. If you wish to support me, I would prefer it if you just gave me feedback.

@@ -318,41 +318,5 @@ namespace Laios
     }
     public class CharacterFunctions
     {
-        public static void HandleOverflowingMaliceTrait2a(ref Character __instance, int amountOverhealed, string traitOfInterest)
-        {
-            // trait2a:
-            // When overhealed, deal 6 Shadow Damage to a random Monster and gain 1 Regeneration. (6 times/round)
-            // int amountOverhealed = __result - __instance.GetHpLeftForMax();
-            if (amountOverhealed <= 0) { return; }
-            __instance.SetAura(__instance, GetAuraCurseData("regeneration"), 1, useCharacterMods: true);
-            Character randomNPC = GetRandomCharacter(MatchManager.Instance.GetTeamNPC());
-            if (IsLivingNPC(randomNPC))
-            {
-                int damage = __instance.DamageWithCharacterBonus(6, Enums.DamageType.Shadow, Enums.CardClass.Item);
-                randomNPC?.IndirectDamage(Enums.DamageType.Shadow, damage, sourceCharacterId: __instance.Id, sourceCharacterName: __instance.SourceName);
-            }
-
-            IncrementTraitActivations(traitOfInterest, useRound: true);
-        }
-        public static void HandleEbonGuardTrait2b(ref Character __instance, int amountOverhealed)
-        {
-            // trait 2b:  
-            // Block on you cannot be Purged. 
-            // When overhealed, gain Block equal to that amount. - Does not gain bonuses -
-            // int amountOverhealed = __result - __instance.GetHpLeftForMax();
-            if (amountOverhealed <= 0) { return; }
-            __instance.SetAura(__instance, GetAuraCurseData("block"), amountOverhealed, useCharacterMods: false);
-        }
-
-        public static void HandleOverhealTraits(ref Character hero, int heal, string function)
-        {
-            if (AtOManager.Instance.TeamHaveTrait(trait4b) && IsLivingHero(hero))
-            {
-                LogDebug($"{function} - trait4b overheal - adding shield");
-                int amountOverhealed = heal - hero.GetHpLeftForMax();
-                if (amountOverhealed <= 0) { return; }
-                hero.SetAura(null, GetAuraCurseData("shield"), amountOverhealed, useCharacterMods: false);
-            }
-        }
     }
 }
