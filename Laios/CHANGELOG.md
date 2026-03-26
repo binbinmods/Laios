@@ -1,3 +1,7 @@
+# 0.2.2
+
+Fixed Cylic Citadel so it now only gives Defenses
+
 # 0.2.1
 
 Updated for AtO v1.7.4.2

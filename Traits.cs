@@ -129,8 +129,17 @@ namespace Laios
                     // int costReduction = 3;
                     bool costZero = true;
                     bool permanentCostReduction = true;
-
-                    string randomCard = GetRandomCardOfTypeAndCost(Enums.HeroClass.Mage, [Enums.CardType.Lightning_Spell, Enums.CardType.Fire_Spell], cost);//, costReduction: -3, vanish: false, permanentCostReduction: true);
+                    Enums.HeroClass cardClass = MatchManager.Instance.GetRandomIntRange(1, 100) % 2 == 0 ? Enums.HeroClass.Warrior : Enums.HeroClass.Healer;
+                    string randomCard = "";
+                    while (randomCard.IsNullOrWhiteSpace())
+                    {
+                        randomCard = GetRandomCardOfTypeAndCost(cardClass, [Enums.CardType.Defense], cost);//, costReduction: -3, vanish: false, permanentCostReduction: true);
+                        cost -= 1;
+                        if (cost < 0)
+                        {
+                            break;
+                        }
+                    }
                     if (randomCard.IsNullOrWhiteSpace())
                     {
                         LogError($"No card found for trait {traitId} with cost {cost}");
@@ -160,14 +169,13 @@ namespace Laios
                 // Sanctify reduces Blunt resistance by 0.5% per charge.
 
                 // trait2b:
-                // Stealth on heroes increases All Damage by an additional 15% per charge and All Resistances by an additional 5% per charge.",
+                // 
 
                 // trait 4a;
-                // Evasion on you can't be purged unless specified. 
-                // Stealth grants 25% additional damage per charge.",
+                // 
 
                 // trait 4b:
-                // Heroes Only lose 75% stealth charges rounding down when acting in stealth.
+                // 
                 case "zeal":
                     traitOfInterest = trait4a;
                     if (IfCharacterHas(characterOfInterest, CharacterHas.Trait, traitOfInterest, AppliesTo.Heroes))

@@ -4,7 +4,7 @@ schemaVersion = "0.2.1"
 [package]
 namespace = "Binbin"
 name = "Laios_The_Enforcer"
-versionNumber = "0.2.1"
+versionNumber = "0.2.2"
 description = "New Hero Mod for Laios, the Enforcer. A new Warrior/Healer specialized in Holy, Zeal, and Blunt"
 websiteUrl = "https://github.com/binbinmods/Laios"
 containsNsfwContent = false
